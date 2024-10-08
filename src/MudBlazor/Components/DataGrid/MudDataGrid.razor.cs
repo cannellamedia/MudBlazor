@@ -220,6 +220,8 @@ namespace MudBlazor
                         //var items = e.NewItems?.Cast<Column<T>>().ToList();
                         onColumnChange(RenderedColumns);
                     };
+            DropContainerHasChanged();
+            StateHasChanged();
         }
 
         internal T _editingItem;
