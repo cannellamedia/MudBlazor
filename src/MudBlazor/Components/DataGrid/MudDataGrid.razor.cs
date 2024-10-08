@@ -4,6 +4,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
@@ -171,7 +172,7 @@ namespace MudBlazor
 
         internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
 
-        private static void Swap<TItem>(List<TItem> list, int indexA, int indexB)
+        private static void Swap<TItem>(ObservableCollection<TItem> list, int indexA, int indexB)
         {
             var tmp = list[indexA];
             list[indexA] = list[indexB];
@@ -206,7 +207,20 @@ namespace MudBlazor
         /// <summary>
         /// The columns currently being displayed.
         /// </summary>
-        public readonly List<Column<T>> RenderedColumns = new List<Column<T>>();
+        public ObservableCollection<Column<T>> RenderedColumns = new ObservableCollection<Column<T>>();
+
+        public void InitializeRenderedColumns(List<Column<T>> items, Action<IEnumerable<Column<T>>> onColumnChange)
+        {
+            if (items is not null && items.Count > 0)
+                RenderedColumns = new ObservableCollection<Column<T>>(items);
+                
+            RenderedColumns.CollectionChanged +=
+                (s, e) =>
+                    {
+                        //var items = e.NewItems?.Cast<Column<T>>().ToList();
+                        onColumnChange(RenderedColumns);
+                    };
+        }
 
         internal T _editingItem;
 
@@ -821,6 +835,12 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public Func<T, bool> QuickFilter { get; set; } = null;
+
+        /// <summary>
+        /// The function that is called on numerous column changes, such as reordering, sorting, and sizing
+        /// </summary>
+        [Parameter]
+        public Action OnColumnStateChanged { get; set; } = null;
 
         /// <summary>
         /// Any custom content for this grid's header.
