@@ -172,7 +172,7 @@ namespace MudBlazor
 
         internal static bool RenderedColumnsItemsSelector(Column<T> item, string dropZone) => item?.PropertyName == dropZone;
 
-        private static void Swap<TItem>(ObservableCollection<TItem> list, int indexA, int indexB)
+        private static void Swap<TItem>(IList<TItem> list, int indexA, int indexB)
         {
             var tmp = list[indexA];
             list[indexA] = list[indexB];
@@ -207,21 +207,26 @@ namespace MudBlazor
         /// <summary>
         /// The columns currently being displayed.
         /// </summary>
-        public ObservableCollection<Column<T>> RenderedColumns = new ObservableCollection<Column<T>>();
+        public List<Column<T>> RenderedColumns = new List<Column<T>>();
 
-        public void InitializeRenderedColumns(List<Column<T>> items, Action<IEnumerable<Column<T>>> onColumnChange)
+        public void OnColumnsInitialized(Action afterColumnsInitialized)
         {
-            if (items is not null && items.Count > 0)
-                RenderedColumns = new ObservableCollection<Column<T>>(items);
-                
-            RenderedColumns.CollectionChanged +=
-                (s, e) =>
-                    {
-                        //var items = e.NewItems?.Cast<Column<T>>().ToList();
-                        onColumnChange(RenderedColumns);
-                    };
-            DropContainerHasChanged();
-            StateHasChanged();
+            UserColumnPreferenceModifications = afterColumnsInitialized;
+        }
+
+        public void InitializeOnColumnChange(Action<IEnumerable<Column<T>>> onColumnChange)
+        {
+            //if (items is not null && items.Count > 0)
+            //RenderedColumns = new List<Column<T>>(items);
+            //OnColumnStateChanged = onColumnChange;
+            //RenderedColumns.CollectionChanged +=
+            //    (s, e) =>
+            //        {
+            //            //var items = e.NewItems?.Cast<Column<T>>().ToList();
+            //            onColumnChange(RenderedColumns);
+            //        };
+            //DropContainerHasChanged();
+            //StateHasChanged();
         }
 
         internal T _editingItem;
@@ -845,6 +850,12 @@ namespace MudBlazor
         public Action OnColumnStateChanged { get; set; } = null;
 
         /// <summary>
+        /// The function to call after columns have been initialized to modify to user preferences.
+        /// </summary>
+        [Parameter]
+        public Action UserColumnPreferenceModifications { get; set; } = null;
+
+        /// <summary>
         /// Any custom content for this grid's header.
         /// </summary>
         [Parameter]
@@ -1259,6 +1270,7 @@ namespace MudBlazor
                 if (HasServerData)
                     StateHasChanged();
                 _isFirstRendered = true;
+                UserColumnPreferenceModifications();
             }
             else
             {
