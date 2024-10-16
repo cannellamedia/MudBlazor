@@ -673,6 +673,16 @@ namespace MudBlazor
             return HiddenState.SetValueAsync(false);
         }
 
+        public double GetWidth()
+        {
+            return HeaderCell.GetCurrentCellWidth().Result;
+        }
+
+        public async Task SetWidthAsync(double width)
+        {
+            await HeaderCell.SetCurrentCellWidth(width);
+        }
+
         /// <summary>
         /// Hides or shows this column.
         /// </summary>

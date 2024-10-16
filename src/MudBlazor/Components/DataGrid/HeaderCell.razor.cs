@@ -343,6 +343,12 @@ namespace MudBlazor
             return boundingRect.Width;
         }
 
+        internal async Task<double> SetCurrentCellWidth(double targetWidth)
+        {
+            var height = await DataGrid.GetActualHeight();
+            return await UpdateColumnWidth(targetWidth, height, true);
+        }
+
         internal async Task SortChangedAsync(MouseEventArgs args)
         {
             if (args.AltKey)
