@@ -203,6 +203,20 @@ namespace MudBlazor
         [Parameter]
         public bool? Hideable { get; set; }
 
+        [Parameter]
+        public double? Width
+        {
+            get
+            {
+                return HeaderCell.GetCurrentCellWidth().Result;
+            }
+            set
+            {
+                if (value.HasValue)
+                    _ = Task.FromResult(HeaderCell.SetCurrentCellWidth(value.Value));
+            }
+        }
+
         /// <summary>
         /// Hides this column.
         /// </summary>
