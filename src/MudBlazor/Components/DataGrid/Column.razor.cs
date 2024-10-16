@@ -636,6 +636,11 @@ namespace MudBlazor
             }
         }
 
+        public bool IsGrouped()
+        {
+            return GroupingState.Value;
+        }
+
         /// <summary>
         /// This method's sole purpose is for the DataGrid to remove grouping in mass.
         /// </summary>
@@ -653,6 +658,11 @@ namespace MudBlazor
         public Task HideAsync()
         {
             return HiddenState.SetValueAsync(true);
+        }
+
+        public bool IsHidden()
+        {
+            return HiddenState.Value;
         }
 
         /// <summary>
