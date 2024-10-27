@@ -33,10 +33,10 @@ namespace MudBlazor
 
         protected string ClearButtonClassname =>
             new CssBuilder("mud-input-clear-button")
-                .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
-                .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
-                .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
-                .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
+            .AddClass("me-n1", Adornment == Adornment.End && HideSpinButtons == false)
+            .AddClass("mud-icon-button-edge-end", Adornment == Adornment.End && HideSpinButtons)
+            .AddClass("me-6", Adornment != Adornment.End && HideSpinButtons == false)
+            .AddClass("mud-icon-button-edge-margin-end", Adornment != Adornment.End && HideSpinButtons)
             .Build();
 
         /// <summary>
@@ -224,11 +224,23 @@ namespace MudBlazor
         private Size GetButtonSize() => Margin == Margin.Dense ? Size.Small : Size.Medium;
 
         /// <summary>
-        /// If true, Clearable is true and there is a non null value (non-string for string values)
+        /// Determine whether to show the clear button when Clearable==true.
+        /// Of course the clear button won't show up if the text field is empty
         /// </summary>
-        private bool GetClearable()
+        private bool ShowClearButton()
         {
+            if (GetDisabledState())
+            {
+                return false;
+            }
+
             if (!Clearable)
+            {
+                return false;
+            }
+
+            // If this is a standalone input it will not be clearable when read-only
+            if (SubscribeToParentForm && GetReadOnlyState())
             {
                 return false;
             }
