@@ -465,13 +465,13 @@ namespace MudBlazor
                 .AddClass("sticky-left", StickyLeft)
                 .AddClass("sticky-right", StickyRight)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         internal string footerClassname =>
             new CssBuilder("mud-table-cell")
                 .AddClass("mud-table-cell-hide", HideSmall)
                 .AddClass(Class)
-            .Build();
+                .Build();
 
         #region Computed Properties
 
