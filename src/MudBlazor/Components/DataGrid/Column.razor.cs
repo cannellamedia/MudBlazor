@@ -57,6 +57,12 @@ namespace MudBlazor
         public string Title { get; set; }
 
         /// <summary>
+        /// A Unique Name for the column for identification
+        /// </summary>
+        [Parameter]
+        public string Name { get; set; }
+
+        /// <summary>
         /// Hides this column.
         /// </summary>
         /// <remarks>
