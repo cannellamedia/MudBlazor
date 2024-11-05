@@ -1736,6 +1736,11 @@ namespace MudBlazor
             }
         }
 
+        public void RefreshGrid()
+        {
+            StateHasChanged();
+        }
+
         private void VirtualItemsProviderInitialize()
         {
             if (VirtualItemsProvider != null || VirtualizeServerData == null)

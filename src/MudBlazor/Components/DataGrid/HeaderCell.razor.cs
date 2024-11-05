@@ -239,17 +239,17 @@ namespace MudBlazor
             await base.OnInitializedAsync();
             _initialDirection = Column?.InitialDirection ?? SortDirection.None;
 
-            if (_initialDirection != SortDirection.None)
-            {
-                // set initial sort
-                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc()));
-            }
-
             if (DataGrid != null)
             {
                 DataGrid.SortChangedEvent += OnGridSortChanged;
                 DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
                 DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
+                
+                if (_initialDirection != SortDirection.None)
+                {
+                    // set initial sort
+                    await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc()));
+                }
             }
         }
 
