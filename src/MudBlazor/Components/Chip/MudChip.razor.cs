@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using MudBlazor.Services;
 using MudBlazor.State;
 using MudBlazor.Utilities;
 
@@ -13,8 +12,14 @@ namespace MudBlazor;
 /// Represents a compact element used to enter information, select a choice, filter content, or trigger an action.
 /// </summary>
 /// <typeparam name="T">The type of item managed by this component.</typeparam>
+/// <seealso cref="MudChipSet{T}"/>
 public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 {
+    [Inject]
+    private IKeyInterceptorService KeyInterceptorService { get; set; } = null!;
+
+    private string _chipContainerId = $"chip-container-{Guid.NewGuid()}";
+
     public MudChip()
     {
         using var registerScope = CreateRegisterScope();
@@ -63,7 +68,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         .AddClass(Class)
         .Build();
 
-    private bool IsClickable => !ChipSet?.ReadOnly ?? (OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+    private bool IsClickable => GetDisabled() is false
+                                && GetReadonly() is false
+                                && (ChipSet is not null || OnClick.HasDelegate || !string.IsNullOrEmpty(Href));
+
+    private bool IsClosable => OnClose.HasDelegate || ChipSet?.AllClosable == true;
 
     private string? RoleAttribute => IsClickable ? "button" : null;
 
@@ -97,6 +106,8 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
     private Size GetSize() => Size ?? ChipSet?.Size ?? MudBlazor.Size.Medium;
 
     private bool GetDisabled() => Disabled || (ChipSet?.Disabled ?? false);
+
+    private bool GetReadonly() => ChipSet?.ReadOnly ?? false;
 
     private bool GetRipple() => Ripple ?? ChipSet?.Ripple ?? true;
 
@@ -339,6 +350,22 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         await ChipSet.AddAsync(this);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        var options = new KeyInterceptorOptions(
+            "mud-chip",
+            [
+                new("Enter", preventDown: "key+none"),
+                new(" ", preventDown: "key+none", preventUp: "key+none"),
+                new("Backspace", preventDown: "key+none"),
+                new("Delete", preventDown: "key+none")
+            ]);
+
+        await KeyInterceptorService.SubscribeAsync(_chipContainerId, options, keyDown: HandleKeyDownAsync);
+    }
+
     protected internal async Task OnClickAsync(MouseEventArgs ev)
     {
         if (ChipSet?.ReadOnly == true)
@@ -366,7 +393,7 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
 
     protected async Task OnCloseAsync(MouseEventArgs ev)
     {
-        if (ChipSet?.ReadOnly == true)
+        if (GetReadonly() || IsClosable is false)
         {
             return;
         }
@@ -379,6 +406,24 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
         StateHasChanged();
     }
 
+    private async Task HandleKeyDownAsync(KeyboardEventArgs args)
+    {
+        if (GetDisabled() || GetReadonly())
+        {
+            return;
+        }
+
+        switch (args.Key)
+        {
+            case "Enter" or "NumpadEnter" or " ":
+                await OnClickAsync(new MouseEventArgs());
+                break;
+            case "Backspace" or "Delete":
+                await OnCloseAsync(new MouseEventArgs());
+                break;
+        }
+    }
+
     /// <summary>
     /// Releases unused resources.
     /// </summary>
@@ -389,6 +434,11 @@ public partial class MudChip<T> : MudComponentBase, IAsyncDisposable
             if (ChipSet is null)
                 return;
             await ChipSet.RemoveAsync(this);
+
+            if (IsJSRuntimeAvailable)
+            {
+                await KeyInterceptorService.UnsubscribeAsync(_chipContainerId);
+            }
         }
         catch (Exception)
         {

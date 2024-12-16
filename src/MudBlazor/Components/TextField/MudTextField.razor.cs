@@ -17,7 +17,6 @@ namespace MudBlazor
 
         protected string Classname =>
            new CssBuilder("mud-input-input-control")
-               .AddClass($"mud-input-{Variant.ToDescriptionString()}-with-label", !string.IsNullOrEmpty(Label))
                .AddClass(Class)
                .Build();
 
@@ -217,6 +216,13 @@ namespace MudBlazor
         }
 
         internal override InputType GetInputType() => InputType;
+
+        private bool ShowClearButton()
+        {
+            if (SubscribeToParentForm)
+                return Clearable && !GetReadOnlyState() && !GetDisabledState();
+            return Clearable && !GetDisabledState();
+        }
 
         private Task OnMaskedValueChanged(string s) => SetTextAsync(s);
 

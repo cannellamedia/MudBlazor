@@ -5,12 +5,16 @@
 <div @attributes="UserAttributes"
      class="@Classname"
      style="@Style"
+     @onpointermove="@PointerMove"
      @onpointerenter="@PointerEnterAsync"
      @onpointerleave="@PointerLeaveAsync"
-     @oncontextmenu="@(ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)"
+     @oncontextmenu="@((ActivationEvent == MouseEvent.RightClick ? ToggleMenuAsync : null)!)"
      @oncontextmenu:preventDefault="@(ActivationEvent == MouseEvent.RightClick)">
-
-    @if (ActivatorContent != null)
+    @if (GetActivatorHidden())
+    {
+        @* No content was set so no need to render anything *@
+    }
+    else if (ActivatorContent != null)
     {
         <CascadingValue Value="@((IActivatable)this)" IsFixed="true">
             <div @onclick="ToggleMenuAsync" disabled="@Disabled" class="@ActivatorClassname">
@@ -47,19 +51,20 @@
                        aria-label="@AriaLabel" />
     }
 
-    @* The portal has to include the cascading values inside, because it's not able to teletransport the cascade *@
+    @* The portal has to include the cascading values inside because it's not able to teletransport the cascade *@
     <MudPopover Open="@Open"
-                Class="@PopoverClass"
+                Class="@PopoverClassname"
+                Style="@Stylename"
                 MaxHeight="@MaxHeight"
-                AnchorOrigin="@AnchorOrigin"
+                AnchorOrigin="@(PositionAtCursor ? Origin.TopLeft : AnchorOrigin)"
                 TransformOrigin="@TransformOrigin"
                 RelativeWidth="@FullWidth"
-                Style="@_popoverStyle"
                 DropShadow="@DropShadow">
         <CascadingValue Value="@this">
             <MudList T="object"
                      Class="@ListClass"
                      Dense="@Dense"
+                     @onpointermove="@PointerMove"
                      @onpointerenter="@PointerEnterAsync"
                      @onpointerleave="@PointerLeaveAsync">
                 @ChildContent
