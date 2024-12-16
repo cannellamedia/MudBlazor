@@ -225,7 +225,7 @@ namespace MudBlazor
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            _initialDirection = Column?.InitialDirection ?? SortDirection.None;
+            SortDirection = Column?.InitialDirection ?? SortDirection.None;
 
             if (DataGrid != null)
             {
@@ -233,10 +233,10 @@ namespace MudBlazor
                 DataGrid.SelectedAllItemsChangedEvent += OnSelectedAllItemsChanged;
                 DataGrid.SelectedItemsChangedEvent += OnSelectedItemsChanged;
                 
-                if (_initialDirection != SortDirection.None)
+                if (SortDirection != SortDirection.None)
                 {
                     // set initial sort
-                    await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, _initialDirection, Column.GetLocalSortFunc()));
+                    await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc()));
                 }
             }
         }
