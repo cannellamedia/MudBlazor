@@ -162,6 +162,28 @@ namespace MudBlazor
         [Parameter]
         public bool Required { get; set; } = true;
 
+        #region Cannella Addon Properties
+        /// <summary>
+        /// A Unique Name for the column for identification
+        /// </summary>
+        [Parameter]
+        public string Name { get; set; }
+
+        public double? Width
+        {
+            get
+            {
+                return HeaderCell.GetCurrentCellWidth().Result;
+            }
+            set
+            {
+                if (value.HasValue)
+                    _ = Task.FromResult(HeaderCell.SetCurrentCellWidth(value.Value));
+            }
+        }
+
+        #endregion
+
         #region HeaderCell Properties
 
         /// <summary>
@@ -574,7 +596,26 @@ namespace MudBlazor
                 return filterContext;
             }
         }
+        #region Cannella Addon Methods
+        public bool IsGrouped()
+        {
+            return GroupingState.Value;
+        }
+        public bool IsHidden()
+        {
+            return HiddenState.Value;
+        }
+        public double GetWidth()
+        {
+            return HeaderCell.GetCurrentCellWidth().Result;
+        }
 
+        public async Task SetWidthAsync(double width)
+        {
+            await HeaderCell.SetCurrentCellWidth(width);
+        }
+
+        #endregion
         protected Column()
         {
             using var registerScope = CreateRegisterScope();

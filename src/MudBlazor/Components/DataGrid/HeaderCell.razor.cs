@@ -557,6 +557,14 @@ namespace MudBlazor
             DataGrid.DropContainerHasChanged();
         }
 
+        #region Cannella Addons
+        internal async Task<double> SetCurrentCellWidth(double targetWidth)
+        {
+            var height = await DataGrid.GetActualHeight();
+            return await UpdateColumnWidth(targetWidth, height, true);
+        }
+        #endregion
+
         private void MarkAsUnsorted()
         {
             SortDirection = SortDirection.None;

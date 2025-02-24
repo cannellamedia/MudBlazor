@@ -2233,6 +2233,13 @@ namespace MudBlazor
             await InvokeAsync(StateHasChanged);
         }
 
+        #region CannellaAddons
+        public void RefreshGrid()
+        {
+            StateHasChanged();
+        }
+        #endregion
+
         /// <summary>
         /// Collapses or expands the hierarchy of the specified item.
         /// </summary>
