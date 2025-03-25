@@ -2,6 +2,10 @@
 // MudBlazor licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace MudBlazor.Utilities.Debounce;
 
 #nullable enable
@@ -11,7 +15,7 @@ namespace MudBlazor.Utilities.Debounce;
 /// </summary>
 internal class DebounceDispatcher
 {
-    private readonly TimeSpan _interval;
+    private readonly int _interval;
     private CancellationTokenSource? _cancellationTokenSource;
 
     /// <summary>
@@ -19,15 +23,6 @@ internal class DebounceDispatcher
     /// </summary>
     /// <param name="interval">The minimum interval in milliseconds between invocations of the debounced function.</param>
     public DebounceDispatcher(int interval)
-        : this(TimeSpan.FromMilliseconds(interval))
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DebounceDispatcher"/> class with the specified interval.
-    /// </summary>
-    /// <param name="interval">The minimum interval as a <see cref="TimeSpan"/> between invocations of the debounced function.</param>
-    public DebounceDispatcher(TimeSpan interval)
     {
         _interval = interval;
     }
@@ -44,7 +39,7 @@ internal class DebounceDispatcher
     /// <returns>A Task representing the asynchronous operation with minimal delay.</returns>
     public async Task DebounceAsync(Func<Task> action, CancellationToken cancellationToken = default)
     {
-        // ReSharper disable MethodHasAsyncOverload (we should not use it as it behaves differently)
+        // ReSharper disable MethodHasAsyncOverload (not available in .net7)
         // Cancel the previous debounce task if it exists
         _cancellationTokenSource?.Cancel();
         // ReSharper restore MethodHasAsyncOverload
@@ -64,9 +59,4 @@ internal class DebounceDispatcher
             // If the task was canceled, ignore it
         }
     }
-
-    /// <summary>
-    /// Cancel the current debounced task.
-    /// </summary>
-    public void Cancel() => _cancellationTokenSource?.Cancel();
 }

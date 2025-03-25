@@ -161,12 +161,12 @@ namespace MudBlazor
         /// <summary>
         /// Register and Show the Popover for the tooltip if it is not disabled, set to be visible, the content or Text is not empty or null
         /// </summary>
-        internal bool ShowToolTip()
+        private bool ShowToolTip()
         {
             return !Disabled && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
         }
 
-        protected override void OnParametersSet()
+        private Task HandlePointerEnterAsync()
         {
             base.OnParametersSet();
 
