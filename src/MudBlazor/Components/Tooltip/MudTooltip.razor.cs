@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
@@ -12,6 +13,10 @@ namespace MudBlazor
         private Origin _transformOrigin;
         public MudTooltip()
         {
+            _previousDelay = Delay;
+            _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
+            _previousDuration = Duration;
+            _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
             using var registerScope = CreateRegisterScope();
             _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
@@ -161,12 +166,29 @@ namespace MudBlazor
         /// <summary>
         /// Register and Show the Popover for the tooltip if it is not disabled, set to be visible, the content or Text is not empty or null
         /// </summary>
-        private bool ShowToolTip()
+        internal bool ShowToolTip()
         {
             return !Disabled && (TooltipContent is not null || !string.IsNullOrEmpty(Text));
         }
 
-        private Task HandlePointerEnterAsync()
+        protected override void OnParametersSet()
+        {
+            base.OnParametersSet();
+
+            if (Math.Abs(_previousDelay - Delay) > .001)
+            {
+                _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
+                _previousDelay = Delay;
+            }
+
+            if (Math.Abs(_previousDuration - Duration) > .001)
+            {
+                _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
+                _previousDuration = Duration;
+            }
+        }
+
+        internal Task HandlePointerEnterAsync()
         {
             base.OnParametersSet();
 
