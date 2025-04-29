@@ -13,10 +13,6 @@ namespace MudBlazor
         private Origin _transformOrigin;
         public MudTooltip()
         {
-            _previousDelay = Delay;
-            _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
-            _previousDuration = Duration;
-            _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
             using var registerScope = CreateRegisterScope();
             _visibleState = registerScope.RegisterParameter<bool>(nameof(Visible))
                 .WithParameter(() => Visible)
@@ -174,25 +170,6 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-
-            if (Math.Abs(_previousDelay - Delay) > .001)
-            {
-                _showDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Delay));
-                _previousDelay = Delay;
-            }
-
-            if (Math.Abs(_previousDuration - Duration) > .001)
-            {
-                _hideDebouncer = new DebounceDispatcher(TimeSpan.FromMilliseconds(Duration));
-                _previousDuration = Duration;
-            }
-        }
-
-        internal Task HandlePointerEnterAsync()
-        {
-            base.OnParametersSet();
-
-            ConvertPlacement();
         }
 
         internal Task HandlePointerEnterAsync() => ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
