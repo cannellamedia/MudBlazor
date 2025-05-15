@@ -292,7 +292,7 @@ namespace MudBlazor
             }
             else if (activeSorts.TryGetValue(Column.PropertyName, out var sortDefinition))
             {
-                Column.SetSortIndex(sortDefinition.Index);
+                Column.SortIndex = sortDefinition.Index;
             }
         }
 
@@ -568,7 +568,7 @@ namespace MudBlazor
         private void MarkAsUnsorted()
         {
             SortDirection = SortDirection.None;
-            Column.SetSortIndex(-1);
+            Column.SortIndex = -1;
         }
 
         #endregion

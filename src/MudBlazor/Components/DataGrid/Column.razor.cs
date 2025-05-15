@@ -325,7 +325,11 @@ namespace MudBlazor
         /// The Index at which to sort this column when <see cref="Sortable"/> is <c>true</c> and SortMode is Multiple
         /// </summary>
         [Parameter]
-        public int SortIndex { get; set; } = -1;
+        public int ManualSortIndex
+        {
+            get => SortIndex;
+            set => SortIndex = value;
+        }
 
         /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
@@ -572,7 +576,7 @@ namespace MudBlazor
 
         #endregion
 
-        //internal int SortIndex { get; set; } = -1;
+        internal int SortIndex { get; set; } = -1;
         internal HeaderCell<T> HeaderCell { get; set; }
 
         private Func<T, object> _sortBy;
@@ -755,10 +759,10 @@ namespace MudBlazor
             }
         }
 
-        internal void SetSortIndex (int sortIndex)
-        {
-            SortIndex = sortIndex;
-        }
+        //internal void SetSortIndex (int sortIndex)
+        //{
+        //    SortIndex = sortIndex;
+        //}
 
         // Allows child components to change column grouping.
         internal async Task SetGroupingAsync(bool group)
