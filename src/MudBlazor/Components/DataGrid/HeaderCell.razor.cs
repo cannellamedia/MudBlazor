@@ -240,7 +240,7 @@ namespace MudBlazor
             if (SortDirection != SortDirection.None)
             {
                 // set initial sort
-                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), indexOverride: Column?.SortIndex ?? -1));
+                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), indexOverride: Column?.ManualSortIndex ?? -1));
             }
 
             if (DataGrid != null)

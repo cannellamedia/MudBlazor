@@ -325,11 +325,7 @@ namespace MudBlazor
         /// The Index at which to sort this column when <see cref="Sortable"/> is <c>true</c> and SortMode is Multiple
         /// </summary>
         [Parameter]
-        public int ManualSortIndex
-        {
-            get => SortIndex;
-            set => SortIndex = value;
-        }
+        public int ManualSortIndex { get; set; } = -1;
 
         /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
@@ -673,6 +669,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            SortIndex = ManualSortIndex;
             if (FilterOperators.Count > 0)
             {
                 var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
