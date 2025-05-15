@@ -240,7 +240,7 @@ namespace MudBlazor
             if (SortDirection != SortDirection.None)
             {
                 // set initial sort
-                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc()));
+                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), indexOverride: Column?.SortIndex ?? -1));
             }
 
             if (DataGrid != null)
@@ -292,7 +292,7 @@ namespace MudBlazor
             }
             else if (activeSorts.TryGetValue(Column.PropertyName, out var sortDefinition))
             {
-                Column.SortIndex = sortDefinition.Index;
+                Column.SetSortIndex(sortDefinition.Index);
             }
         }
 
@@ -568,7 +568,7 @@ namespace MudBlazor
         private void MarkAsUnsorted()
         {
             SortDirection = SortDirection.None;
-            Column.SortIndex = -1;
+            Column.SetSortIndex(-1);
         }
 
         #endregion
