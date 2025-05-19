@@ -1926,10 +1926,11 @@ namespace MudBlazor
         /// <param name="direction">The direction to sort results.</param>
         /// <param name="sortFunc">The function which sorts results.</param>
         /// <param name="comparer">The comparer used for custom comparisons.</param>
+        /// <param name="indexOverride">If given, will manually set the index of sort. If matching another index, the sort by will arbitrarily order them.</param>
         /// <remarks>
         /// When the <see cref="SortMode"/> is <see cref="SortMode.Single"/>, this method replaces the sort column.  Otherwise, this sort is appended to any existing sort column.
         /// </remarks>
-        public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object> sortFunc, IComparer<object> comparer = null)
+        public async Task ExtendSortAsync(string field, SortDirection direction, Func<T, object> sortFunc, IComparer<object> comparer = null, int indexOverride = -1)
         {
             // If SortMode is not multiple, use the default set approach and don't extend.
             if (SortMode != SortMode.Multiple)
@@ -1940,10 +1941,10 @@ namespace MudBlazor
 
             // in case it already exists, just update the current entry
             if (SortDefinitions.TryGetValue(field, out var sortDefinition))
-                SortDefinitions[field] = sortDefinition with { Descending = direction == SortDirection.Descending, SortFunc = sortFunc, Comparer = comparer };
+                SortDefinitions[field] = sortDefinition with { Descending = direction == SortDirection.Descending, SortFunc = sortFunc, Comparer = comparer, Index = (indexOverride < 0 ? sortDefinition.Index : indexOverride) };
             else
             {
-                var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, SortDefinitions.Count, sortFunc, comparer);
+                var newDefinition = new SortDefinition<T>(field, direction == SortDirection.Descending, (indexOverride < 0 ? SortDefinitions.Count : indexOverride), sortFunc, comparer);
                 SortDefinitions[field] = newDefinition;
             }
 
@@ -2431,6 +2432,13 @@ namespace MudBlazor
             }
             await InvokeAsync(StateHasChanged);
         }
+
+        #region CannellaAddons
+        public void RefreshGrid()
+        {
+            StateHasChanged();
+        }
+        #endregion
 
         /// <summary>
         /// Collapses or expands the hierarchy of the specified item.

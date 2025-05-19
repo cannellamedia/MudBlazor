@@ -92,7 +92,7 @@ public static class MudGlobal
         /// <summary>
         /// The amount of time in milliseconds to wait from opening the popover before beginning to perform the transition.
         /// </summary>
-        public static TimeSpan Duration { get; set; } = TimeSpan.FromMilliseconds(251);
+        public static TimeSpan Duration { get; set; } = TimeSpan.Zero;
     }
 
     /// <summary>

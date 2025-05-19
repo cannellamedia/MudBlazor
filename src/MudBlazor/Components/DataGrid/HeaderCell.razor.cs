@@ -240,7 +240,7 @@ namespace MudBlazor
             if (SortDirection != SortDirection.None)
             {
                 // set initial sort
-                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc()));
+                await InvokeAsync(() => DataGrid.ExtendSortAsync(Column.PropertyName, SortDirection, Column.GetLocalSortFunc(), indexOverride: Column?.ManualSortIndex ?? -1));
             }
 
             if (DataGrid != null)
@@ -566,6 +566,14 @@ namespace MudBlazor
             DataGrid.GroupItems();
             DataGrid.DropContainerHasChanged();
         }
+
+        #region Cannella Addons
+        internal async Task<double> SetCurrentCellWidth(double targetWidth)
+        {
+            var height = await DataGrid.GetActualHeight();
+            return await UpdateColumnWidth(targetWidth, height, true);
+        }
+        #endregion
 
         private void MarkAsUnsorted()
         {

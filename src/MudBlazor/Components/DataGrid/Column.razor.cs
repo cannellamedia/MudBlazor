@@ -162,6 +162,28 @@ namespace MudBlazor
         [Parameter]
         public bool Required { get; set; } = true;
 
+        #region Cannella Addon Properties
+        /// <summary>
+        /// A Unique Name for the column for identification
+        /// </summary>
+        [Parameter]
+        public string Name { get; set; }
+
+        public double? Width
+        {
+            get
+            {
+                return HeaderCell.GetCurrentCellWidth().Result;
+            }
+            set
+            {
+                if (value.HasValue)
+                    _ = Task.FromResult(HeaderCell.SetCurrentCellWidth(value.Value));
+            }
+        }
+
+        #endregion
+
         #region HeaderCell Properties
 
         /// <summary>
@@ -298,6 +320,12 @@ namespace MudBlazor
         /// </remarks>
         [Parameter]
         public SortDirection InitialDirection { get; set; } = SortDirection.None;
+
+        /// <summary>
+        /// The Index at which to sort this column when <see cref="Sortable"/> is <c>true</c> and SortMode is Multiple
+        /// </summary>
+        [Parameter]
+        public int ManualSortIndex { get; set; } = -1;
 
         /// <summary>
         /// The icon shown when <see cref="Sortable"/> is <c>true</c>.
@@ -574,7 +602,26 @@ namespace MudBlazor
                 return filterContext;
             }
         }
+        #region Cannella Addon Methods
+        public bool IsGrouped()
+        {
+            return GroupingState.Value;
+        }
+        public bool IsHidden()
+        {
+            return HiddenState.Value;
+        }
+        public double GetWidth()
+        {
+            return HeaderCell.GetCurrentCellWidth().Result;
+        }
 
+        public async Task SetWidthAsync(double width)
+        {
+            await HeaderCell.SetCurrentCellWidth(width);
+        }
+
+        #endregion
         protected Column()
         {
             using var registerScope = CreateRegisterScope();
@@ -601,6 +648,7 @@ namespace MudBlazor
 
         protected override void OnInitialized()
         {
+            SortIndex = ManualSortIndex;
             if (FilterOperators.Count > 0)
             {
                 var defaultOperators = FilterOperator.GetOperatorByDataType(PropertyType);
@@ -686,6 +734,11 @@ namespace MudBlazor
                 }
             }
         }
+
+        //internal void SetSortIndex (int sortIndex)
+        //{
+        //    SortIndex = sortIndex;
+        //}
 
         // Allows child components to change column grouping.
         internal async Task SetGroupingAsync(bool group)

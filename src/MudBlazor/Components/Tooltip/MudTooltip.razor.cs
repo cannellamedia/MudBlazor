@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor.State;
 using MudBlazor.Utilities;
+using MudBlazor.Utilities.Debounce;
 
 namespace MudBlazor
 {
@@ -219,8 +220,6 @@ namespace MudBlazor
         protected override void OnParametersSet()
         {
             base.OnParametersSet();
-
-            ConvertPlacement();
         }
 
         internal Task HandlePointerEnterAsync() => ShowOnHover ? _visibleState.SetValueAsync(true) : Task.CompletedTask;
