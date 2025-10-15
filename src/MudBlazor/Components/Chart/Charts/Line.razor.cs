@@ -41,7 +41,10 @@ namespace MudBlazor.Charts
         protected override void RebuildChart()
         {
             if (MudChartParent != null)
+            {
                 _series = MudChartParent.ChartSeries;
+                ChartOptions = MudChartParent.ChartOptions;
+            }
 
             SetBounds();
             ComputeUnitsAndNumberOfLines(out var gridXUnits, out var gridYUnits, out var numHorizontalLines, out var lowestHorizontalLine, out var numVerticalLines);
@@ -118,7 +121,7 @@ namespace MudBlazor.Charts
                 {
                     X = HorizontalStartSpace - 10,
                     Y = _boundHeight - y + 5,
-                    Value = ToS(startGridY, MudChartParent?.ChartOptions.YAxisFormat)
+                    Value = BuildYAxisValueString(startGridY)
                 };
                 _horizontalValues.Add(lineValue);
             }
@@ -139,7 +142,7 @@ namespace MudBlazor.Charts
                 };
                 _verticalLines.Add(line);
 
-                var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : "";
+                var xLabels = i < XAxisLabels.Length ? XAxisLabels[i] : string.Empty;
                 var lineValue = new SvgText()
                 {
                     X = x,
@@ -204,13 +207,16 @@ namespace MudBlazor.Charts
                                 continue;
                             }
 
+                            var index = j / interpolationResolution;
+                            var xLabels = index < XAxisLabels.Length ? XAxisLabels[index] : string.Empty;
+
                             chartDataCircles.Add(new()
                             {
                                 Index = j,
                                 CX = x,
                                 CY = y,
                                 LabelX = x,
-                                LabelXValue = XAxisLabels[j / interpolationResolution],
+                                LabelXValue = xLabels,
                                 LabelY = y,
                                 LabelYValue = dataValue.ToString(series.DataMarkerTooltipYValueFormat),
                             });

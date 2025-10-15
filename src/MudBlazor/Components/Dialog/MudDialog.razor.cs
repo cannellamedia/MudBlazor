@@ -181,7 +181,7 @@ namespace MudBlazor
         /// The element which will receive focus when this dialog is shown.
         /// </summary>
         /// <remarks>
-        /// Defaults to <see cref="DefaultFocus.Element"/> in <see cref="MudGlobal.DialogDefaults.DefaultFocus"/>.        
+        /// Defaults to <see cref="DefaultFocus.Element"/> in <see cref="MudGlobal.DialogDefaults.DefaultFocus"/>.
         /// </remarks>
         [Parameter]
         [Category(CategoryTypes.Dialog.Behavior)]
@@ -205,7 +205,7 @@ namespace MudBlazor
                     throw new InvalidOperationException("You can only show an inlined dialog.");
                 }
 
-                if (_reference is not null)
+                if (_reference is not null && !_reference.Result.IsCompleted)
                     return _reference;
 
                 var parameters = new DialogParameters
@@ -275,6 +275,10 @@ namespace MudBlazor
                     {
                         // Forward render update to instance
                         (_reference.Dialog as IMudStateHasChanged)?.StateHasChanged();
+
+                        //forward render update to instance container
+                        if (_reference.Dialog is MudDialog { DialogInstance: not null } dialog)
+                            await InvokeAsync(dialog.DialogInstance!.StateHasChanged);
                     }
                     else
                     {

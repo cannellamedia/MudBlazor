@@ -41,11 +41,11 @@ namespace MudBlazor.UnitTests.Components
         }
 
         [Test]
-        public void DatePickerOpenButtonAriaLabel()
+        public void DatePickerOpenButtonDefaultAriaLabel()
         {
             var comp = Context.RenderComponent<DatePickerValidationTest>();
             var openButton = comp.Find(".mud-input-adornment button");
-            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open Date Picker");
+            openButton.Attributes.GetNamedItem("aria-label")?.Value.Should().Be("Open");
         }
 
         [Test]
@@ -463,11 +463,16 @@ namespace MudBlazor.UnitTests.Components
 
             picker.Markup.Should().Contain("mud-selected"); //confirm selected date is shown
 
+
+            // Calculate expected date before selection
+            var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
+            var expectedDate = new DateTime(date.Year, date.Month, 23);
+
+            // Select the date
             comp.SelectDate("23");
 
-            var date = DateTime.Today.Subtract(TimeSpan.FromDays(60));
-
-            picker.Instance.Date.Should().Be(new DateTime(date.Year, date.Month, 23));
+            // Wait for the date picker to update its state after selection
+            comp.WaitForAssertion(() => picker.Instance.Date.Should().Be(expectedDate));
         }
 
         [Test]

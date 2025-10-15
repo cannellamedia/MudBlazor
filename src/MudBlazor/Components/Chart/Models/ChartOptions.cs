@@ -39,6 +39,13 @@ namespace MudBlazor
         public string? YAxisFormat { get; set; }
 
         /// <summary>
+        /// Custom formatting function for vertical axis values.
+        /// If set, this function will be used to convert Y-axis values to strings for display purposes.
+        /// If not provided, <see cref="YAxisFormat"/> will be used instead.
+        /// </summary>
+        public Func<double, string>? YAxisToStringFunc { get; set; }
+
+        /// <summary>
         /// Shows vertical axis lines.
         /// </summary>
         /// <remarks>
@@ -103,7 +110,7 @@ namespace MudBlazor
 
         /// <summary>
         /// Enables smooth color transitions for heatmap cells and removes all padding between cells in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to false
+        /// Defaults to <c>false</c>
         /// </summary>
         public bool EnableSmoothGradient { get; set; } = false;
 
@@ -121,26 +128,25 @@ namespace MudBlazor
 
         /// <summary>
         /// Enables tooltips for values
-        /// Defaults to true
+        /// Defaults to <c>true</c>
         /// </summary>
         public bool ShowToolTips { get; set; } = true;
 
         /// <summary>
         /// Enables labels for every box in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to true
+        /// Defaults to <c>true</c>
         /// </summary>
         public bool ShowLabels { get; set; } = true;
 
         /// <summary>
         /// Enables label values for the legend boxes in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to false
+        /// Defaults to <c>false</c>
         /// </summary>
-        /// 
         public bool ShowLegendLabels { get; set; } = false;
 
         /// <summary>
         /// The format applied to labels for every box in a <see cref="ChartType.HeatMap"/>
-        /// Defaults to "F2"
+        /// Defaults to <c>"F2"</c>
         /// </summary>
         public string ValueFormatString { get; set; } = "F2";
 
